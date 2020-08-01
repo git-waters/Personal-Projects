@@ -19,13 +19,13 @@ yf.pdr_override()
 plt.style.use('ggplot')
 
 
-# def save_sp500_tickers():
-# df_companies = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
-# tickers = df_companies[0]['Symbol']
-# with open("sp500tickers.pickle", "wb") as f:
-# pickle.dump(tickers, f)
-# print(tickers)
-# return tickers
+def save_sp500_tickers():
+    df_companies = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
+    tickers = df_companies[0]['Symbol']
+    with open("sp500tickers.pickle", "wb") as f:
+        pickle.dump(tickers, f)
+    print(tickers)
+    return tickers
 
 
 def save_sp500_tickers():
@@ -42,6 +42,13 @@ def save_sp500_tickers():
 
 
 def get_pricing_data(reload_sp500=False):
+    print("Please enter the year, month and day for the beginning and end of the search")
+    starty = input("Start Year?")
+    startm = input("Start Month?")
+    startd = input("Start Day?")
+    endy = input("End Year?")
+    endm = input("End Month?")
+    endd = input("End Day?")
     if reload_sp500:
         tickers = save_sp500_tickers()
     else:
@@ -50,9 +57,16 @@ def get_pricing_data(reload_sp500=False):
 
     if not os.path.exists('stock_dfs'):
         os.makedirs('stock_dfs')
+    print("Please enter the year, month and day for the beginning and end of the search")
+    starty = input("Start Year?")
+    startm = input("Start Month?")
+    startd = input("Start Day?")
+    endy = input("End Year?")
+    endm = input("End Month?")
+    endd = input("End Day?")
 
-    start = dt.datetime(2000, 1, 1)
-    end = dt.datetime(2020, 7, 1)
+    start = dt.datetime(starty, startm, startd)
+    end = dt.datetime(endy, endm, endd)
 
     for ticker in tickers:
         if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
@@ -62,8 +76,9 @@ def get_pricing_data(reload_sp500=False):
             print('Already have {}'.format(ticker))
 
 
-# save_sp500_tickers()
-# get_pricing_data()
+save_sp500_tickers()
+get_pricing_data()
+
 
 def compile_stock_data():
     with open("sp500tickers.pickle", "rb") as f:
@@ -94,21 +109,24 @@ def compile_stock_data():
     main_df.to_csv('sp500_joined_closes.csv')
 
 
-# compile_stock_data()
+compile_stock_data()
+
 
 # Function to see the correlation between stock returns
 # Stock returns tend to follow normal distribution and prices do not
+
 
 def visualize_data():
     df = pd.read_csv('sp500_joined_closes.csv')
     # df['AAPL'].plot()
     # plt.show()
-# Make a correlation between stock returns
+    # Make a correlation between stock returns
     # Produces a heat map of the correlation between stock returns
     df.set_index('Date', inplace=True)
     df_corr = df.pct_change().corr()
     print(df_corr.head())
     sns.heatmap(df_corr, annot=False, cmap='RdYlGn')
     plt.show()
+
 
 visualize_data()
