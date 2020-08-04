@@ -19,13 +19,13 @@ yf.pdr_override()
 plt.style.use('ggplot')
 
 
-def save_sp500_tickers():
-    df_companies = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
-    tickers = df_companies[0]['Symbol']
-    with open("sp500tickers.pickle", "wb") as f:
-        pickle.dump(tickers, f)
-    print(tickers)
-    return tickers
+#def save_sp500_tickers():
+    #df_companies = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
+    #tickers = df_companies[0]['Symbol']
+    #with open("sp500tickers.pickle", "wb") as f:
+        #pickle.dump(tickers, f)
+    #print(tickers)
+    #return tickers
 
 
 def save_sp500_tickers():
@@ -39,31 +39,28 @@ def save_sp500_tickers():
             ticker = ticker.replace('.', '-')
             print('ticker replaced to', ticker)
         tickers.append(ticker)
+        with open("s&p500tickers.pickle", "wb") as f:
+            pickle.dump(tickers, f)
+
+        return tickers
 
 
 def get_pricing_data(reload_sp500=False):
     print("Please enter the year, month and day for the beginning and end of the search")
-    starty = input("Start Year?")
-    startm = input("Start Month?")
-    startd = input("Start Day?")
-    endy = input("End Year?")
-    endm = input("End Month?")
-    endd = input("End Day?")
+    starty = int(input("Start Year?"))
+    startm = int(input("Start Month?"))
+    startd = int(input("Start Day?"))
+    endy = int(input("End Year?"))
+    endm = int(input("End Month?"))
+    endd = int(input("End Day?"))
     if reload_sp500:
         tickers = save_sp500_tickers()
     else:
-        with open("sp500tickers.pickle", "rb") as f:
+        with open("s&p500tickers.pickle", "rb") as f:
             tickers = pickle.load(f)
 
     if not os.path.exists('stock_dfs'):
         os.makedirs('stock_dfs')
-    print("Please enter the year, month and day for the beginning and end of the search")
-    starty = input("Start Year?")
-    startm = input("Start Month?")
-    startd = input("Start Day?")
-    endy = input("End Year?")
-    endm = input("End Month?")
-    endd = input("End Day?")
 
     start = dt.datetime(starty, startm, startd)
     end = dt.datetime(endy, endm, endd)
@@ -76,12 +73,8 @@ def get_pricing_data(reload_sp500=False):
             print('Already have {}'.format(ticker))
 
 
-save_sp500_tickers()
-get_pricing_data()
-
-
 def compile_stock_data():
-    with open("sp500tickers.pickle", "rb") as f:
+    with open("s&p500tickers.pickle", "rb") as f:
         tickers = pickle.load(f)
         print("stock data loaded.")
 
@@ -106,10 +99,7 @@ def compile_stock_data():
             print(count)
 
     print(main_df.head())
-    main_df.to_csv('sp500_joined_closes.csv')
-
-
-compile_stock_data()
+    main_df.to_csv('s&p500_joined_closes.csv')
 
 
 # Function to see the correlation between stock returns
@@ -117,7 +107,7 @@ compile_stock_data()
 
 
 def visualize_data():
-    df = pd.read_csv('sp500_joined_closes.csv')
+    df = pd.read_csv('s&p500_joined_closes.csv')
     # df['AAPL'].plot()
     # plt.show()
     # Make a correlation between stock returns
@@ -129,4 +119,8 @@ def visualize_data():
     plt.show()
 
 
+save_sp500_tickers()
+get_pricing_data()
+compile_stock_data()
 visualize_data()
+
